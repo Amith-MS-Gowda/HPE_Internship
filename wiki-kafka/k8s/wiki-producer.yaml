@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wiki-producer
+  labels:
+    app: wiki-producer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wiki-producer
+  template:
+    metadata:
+      labels:
+        app: wiki-producer
+    spec:
+      restartPolicy: Always
+      containers:
+      - name: wiki-producer
+        image: amsg08/wiki-producer:latest
+        env:
+        - name: KAFKA_BROKER
+          value: kafka:9092
+        - name: TOPIC_NAME
+          value: wikipedia-events
+        - name: ELASTICSEARCH_HOST
+          value: http://elasticsearch:9200
+        command: ["python", "wiki_producer.py"]
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+        imagePullPolicy: Always
