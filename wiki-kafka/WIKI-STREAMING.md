@@ -75,8 +75,29 @@ wiki-kafka/
 - **GitHub** (Version control & PR management)
 
 ---
+## 🐳 Docker Build & Push Commands
 
-## ✅ How to Deploy (K8s)
+### 🔹 Producer Service
+
+```bash
+cd wiki_producer/
+docker build -t amithgowda/wiki-producer:latest .
+docker push amithgowda/wiki-producer:latest
+```
+
+### 🔹 Processor Service
+
+```bash
+cd wiki_stream_processor/
+docker build -t amithgowda/wiki-processor:latest .
+docker push amithgowda/wiki-processor:latest
+```
+
+⚠️ Replace `amithgowda` with your DockerHub username.
+
+---
+
+## ✅ Kubernetes Deployment (K8s)
 
 ```bash
 kubectl apply -f k8s/zookeeper.yaml
@@ -87,7 +108,47 @@ kubectl apply -f k8s/elasticsearch.yaml
 kubectl apply -f k8s/kibana.yaml
 kubectl apply -f k8s/wiki-producer.yaml
 kubectl apply -f k8s/wiki-processor.yaml
+
+TO APPLY EVERYTHING USING SINGLE COMMAND USE:  kubectl apply -f .
 ```
+
+---
+
+## 🩺 Check Deployment Status
+
+### 🔸 Check all Pods status:
+
+```bash
+kubectl get pods
+```
+
+---
+
+## 📜 View Logs in Terminal
+
+### 🔹 Producer Logs:
+
+```bash
+kubectl logs -f deployment/wiki-producer
+```
+
+### 🔹 Processor Logs:
+
+```bash
+kubectl logs -f deployment/wiki-processor
+```
+
+---
+
+## 🔍 Access Kibana Dashboard
+
+Once Kibana is running, forward the port to access the UI locally:
+
+```bash
+kubectl port-forward service/kibana 5601:5601
+```
+
+👉 Open [http://localhost:5601](http://localhost:5601) to visualize Wikipedia edit events in real-time.
 
 ---
 
