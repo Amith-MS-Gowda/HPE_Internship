@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wiki-processor
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wiki-processor
+  template:
+    metadata:
+      labels:
+        app: wiki-processor
+    spec:
+      containers:
+      - name: wiki-processor
+        image: amsg08/wiki-processor:latest  # Your DockerHub image
+        env:
+        - name: ELASTICSEARCH_HOST
+          value: http://elasticsearch:9200
+        - name: KAFKA_BROKER
+          value: kafka:9092
+        - name: TOPIC_NAME
+          value: wikipedia-events
+        - name: FILTERED_TOPIC_NAME
+          value: filtered-wikipedia-events
+        - name: ES_INDEX
+          value: filtered-wikipedia-events
+        # Optional: if wiki-processor.py is the entry point
+        command: ["faust", "-A", "wiki_stream_processor", "worker", "-l", "info"]
+
