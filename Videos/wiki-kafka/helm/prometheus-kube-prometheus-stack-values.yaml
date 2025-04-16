@@ -1,0 +1,19 @@
+grafana:
+  enabled: true
+  adminPassword: "admin"
+  service:
+    type: NodePort
+    nodePort: 30001
+  defaultDashboardsEnabled: true
+
+prometheus:
+  service:
+    type: NodePort
+    nodePort: 30002
+  prometheusSpec:
+    serviceMonitorSelectorNilUsesHelmValues: false
+    podMonitorSelectorNilUsesHelmValues: false
+    additionalScrapeConfigs:
+      - job_name: 'wiki-apps'
+        static_configs:
+          - targets: ['wiki-producer.default.svc.cluster.local:8000', 'wiki-processor.default.svc.cluster.local:8000']
