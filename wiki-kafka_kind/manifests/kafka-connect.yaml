@@ -1,0 +1,73 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka-connect
+spec:
+  ports:
+  - port: 8083
+  selector:
+    app: kafka-connect
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka-connect
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kafka-connect
+  template:
+    metadata:
+      labels:
+        app: kafka-connect
+    spec:
+      containers:
+      - name: kafka-connect
+        image: confluentinc/cp-kafka-connect:latest
+        ports:
+        - containerPort: 8083
+        env:
+        - name: CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR
+          value: "1"
+        - name: CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR
+          value: "1"
+        - name: CONNECT_STATUS_STORAGE_REPLICATION_FACTOR
+          value: "1"
+        - name: CONNECT_BOOTSTRAP_SERVERS
+          value: kafka:9092
+        - name: CONNECT_REST_ADVERTISED_HOST_NAME
+          value: kafka-connect
+        - name: CONNECT_GROUP_ID
+          value: connect-cluster
+        - name: CONNECT_CONFIG_STORAGE_TOPIC
+          value: connect-configs
+        - name: CONNECT_OFFSET_STORAGE_TOPIC
+          value: connect-offsets
+        - name: CONNECT_STATUS_STORAGE_TOPIC
+          value: connect-status
+        - name: CONNECT_KEY_CONVERTER
+          value: org.apache.kafka.connect.json.JsonConverter
+        - name: CONNECT_VALUE_CONVERTER
+          value: org.apache.kafka.connect.json.JsonConverter
+        - name: CONNECT_INTERNAL_KEY_CONVERTER
+          value: org.apache.kafka.connect.json.JsonConverter
+        - name: CONNECT_INTERNAL_VALUE_CONVERTER
+          value: org.apache.kafka.connect.json.JsonConverter
+        - name: CONNECT_LOG4J_ROOT_LOGLEVEL
+          value: INFO
+        - name: CONNECT_PLUGIN_PATH
+          value: /usr/share/java,/usr/share/confluent-hub-components
+          
+      #    # *** Add JMX Exporter Sidecar Container Below ***
+      # - name: jmx-exporter
+      #   image: prom/jmx-exporter:latest  # Use the JMX Exporter container image
+      #   ports:
+      #   - containerPort: 5556  # Expose JMX metrics port
+      #   env:
+      #   - name: KAFKA_JMX_OPTS
+      #     value: "-Dcom.sun.management.jmxremote.port=5555"  # JMX port for Kafka
+      #   command:
+      #     - "/bin/bash"
+      #     - "-c"
+      #     - "echo starting jmx-exporter && /opt/jmx_exporter/jmx_exporter /etc/jmx_exporter/jmx_exporter_config.yml"
