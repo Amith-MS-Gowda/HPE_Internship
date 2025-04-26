@@ -1,4 +1,4 @@
-# 📚 Wiki-Kafka_Kind Pipeline Projec
+# 📚 Wiki_Kafka_Kind Pipeline Projec
 This project implements a real-time streaming pipeline using Kafka to ingest and process Wikipedia edit events. The processed data is streamed into Elasticsearch for indexing and visualized via Kibanadashboards. The entire system is containerized using Docker and deployed locally using KIND (Kubernetes in Docker) for orchestration.
 
 ## 🏗️ Features
