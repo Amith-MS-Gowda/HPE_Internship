@@ -29,13 +29,13 @@ Ensure the following tools are installed:
 - [Helm](https://helm.sh/docs/intro/install/) *(optional)*
 - [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
 
-### 🧱 Step 1: Clone Repository & Set up KIND Cluster
+### 📁 Step 1: Clone Repository & Set up KIND Cluster
 
 Clone the repository:
 
 ```bash
-git clone https://github.com/yourusername/wiki-kafka-pipeline.git
-cd wiki-kafka-pipeline
+git clone <url>
+cd wiki-kafka_kind
 ```
 
 ### 🧱 Step 2: Set up the KIND Cluster
