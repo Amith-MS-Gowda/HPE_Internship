@@ -30,6 +30,9 @@ delete-cluster:
 deploy:
 	$(KUBECTL) apply -f $(MANIFEST_DIR)/
 
+pods:
+	$(KUBECTL) get pods
+
 logs:
 	$(KUBECTL) logs -l app=wiki-producer --tail=100 -f &
 	$(KUBECTL) logs -l app=wiki-processor --tail=100 -f &
