@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka-exporter
+  labels:
+    app: kafka-exporter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kafka-exporter
+  template:
+    metadata:
+      labels:
+        app: kafka-exporter
+    spec:
+      containers:
+      - name: kafka-exporter
+        image: danielqsj/kafka-exporter:latest
+        args:
+          - --kafka.server=kafka:9092
+        ports:
+        - containerPort: 9308
+        resources:
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka-exporter
+  labels:
+    app: kafka-exporter
+spec:
+  ports:
+  - port: 9308
+    targetPort: 9308
+  selector:
+    app: kafka-exporter

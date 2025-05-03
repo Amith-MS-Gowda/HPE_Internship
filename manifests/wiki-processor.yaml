@@ -1,0 +1,96 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wiki-processor
+  labels:
+    app: wiki-processor
+    component: stream-processor
+    monitoring: "true"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wiki-processor
+  template:
+    metadata:
+      labels:
+        app: wiki-processor
+        component: stream-processor
+        monitoring: "true"
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "6066"  # Faust's default metrics port
+        prometheus.io/path: "/metrics"
+    spec:
+      containers:
+      - name: wiki-processor
+        image: amsg08/wiki-processor:latest
+        ports:
+        - containerPort: 6066  # Faust web/metrics port
+          name: metrics
+          protocol: TCP
+        - containerPort: 8001  # Additional health port
+          name: health
+          protocol: TCP
+        env:
+        - name: ELASTICSEARCH_HOST
+          value: http://elasticsearch:9200
+        - name: KAFKA_BROKER
+          value: kafka:9092
+        - name: TOPIC_NAME
+          value: wikipedia-events
+        - name: FILTERED_TOPIC_NAME
+          value: filtered-wikipedia-events
+        - name: ES_INDEX
+          value: filtered-wikipedia-events
+        - name: FAUST_APP_ID
+          value: wiki-processor
+        - name: METRICS_PORT
+          value: "6066"
+        - name: HEALTH_PORT
+          value: "8001"
+        - name: LOG_LEVEL
+          value: "info"
+        command: ["faust", "-A", "wiki_stream_processor", "worker", "-l", "info", "--web-port", "6066"]
+        resources:
+          limits:
+            memory: "1Gi"
+            cpu: "1000m"
+          requests:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 6066
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 6066
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 2
+        imagePullPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: wiki-processor
+  labels:
+    app: wiki-processor
+    component: stream-processor
+spec:
+  ports:
+  - name: metrics
+    port: 6066
+    targetPort: 6066
+    protocol: TCP
+  - name: health
+    port: 8001
+    targetPort: 8001
+    protocol: TCP
+  selector:
+    app: wiki-processor

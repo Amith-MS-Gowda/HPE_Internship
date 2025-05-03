@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka
+  labels:
+    app: kafka
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kafka
+  template:
+    metadata:
+      labels:
+        app: kafka
+    spec:
+      containers:
+      - name: kafka
+        image: wurstmeister/kafka:latest
+        env:
+        - name: KAFKA_ZOOKEEPER_CONNECT
+          value: zookeeper:2181
+        - name: KAFKA_LISTENERS
+          value: PLAINTEXT://0.0.0.0:9092
+        - name: KAFKA_ADVERTISED_LISTENERS
+          value: PLAINTEXT://kafka:9092
+        - name: KAFKA_BROKER_ID
+          value: "1"
+        - name: KAFKA_JMX_OPTS
+          value: "-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.port=7071 -Djava.rmi.server.hostname=kafka"
+        ports:
+        - containerPort: 9092
+        - containerPort: 7071
+          name: jmx
+      - name: jmx-exporter
+        image: bitnami/jmx-exporter:latest
+        args:
+          - --config.file=/etc/jmx-exporter/config.yml
+        ports:
+        - containerPort: 7071
+          name: metrics
+        volumeMounts:
+        - name: jmx-config
+          mountPath: /etc/jmx-exporter/
+      volumes:
+      - name: jmx-config
+        configMap:
+          name: kafka-jmx-config
