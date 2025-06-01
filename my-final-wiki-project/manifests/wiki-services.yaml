@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: wiki-stream-processor
+  labels:
+    app: wiki-stream-processor
+spec:
+  selector:
+    app: wiki-stream-processor
+  ports:
+  - name: metrics
+    port: 6066
+    targetPort: 6066
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: wiki-producer
+  labels:
+    app: wiki-producer
+spec:
+  selector:
+    app: wiki-producer
+  ports:
+  - name: metrics
+    port: 8000
+    targetPort: 8000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: wiki-processor
+  labels:
+    app: wiki-processor
+spec:
+  selector:
+    app: wiki-processor
+  ports:
+  - name: metrics
+    port: 8000
+    targetPort: 8000

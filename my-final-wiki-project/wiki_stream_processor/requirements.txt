@@ -1,0 +1,4 @@
+faust==1.10.4
+elasticsearch==7.17.0
+aiohttp_cors==0.7.0
+typing_extensions==3.7.4.3

@@ -1,0 +1,57 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: zookeeper
+spec:
+  ports:
+    - port: 2181
+      name: client
+    - port: 9141
+      name: metrics
+  selector:
+    app: zookeeper
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zookeeper
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: zookeeper
+  template:
+    metadata:
+      labels:
+        app: zookeeper
+    spec:
+      initContainers:
+      - name: jmx-agent-installer
+        image: curlimages/curl:latest
+        command:
+        - sh
+        - -c
+        - curl -L https://repo1.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/0.18.0/jmx_prometheus_javaagent-0.18.0.jar -o /tmp/jmx_prometheus_javaagent.jar && cp /tmp/jmx_prometheus_javaagent.jar /jmx_exporter/
+        volumeMounts:
+        - name: jmx-agent
+          mountPath: /jmx_exporter
+      containers:
+        - name: zookeeper
+          image: wurstmeister/zookeeper
+          ports:
+            - containerPort: 2181
+            - containerPort: 9141
+          env:
+            - name: JVMFLAGS
+              value: "-javaagent:/jmx_exporter/jmx_prometheus_javaagent.jar=9141:/etc/jmx-config/config.yaml"
+          volumeMounts:
+            - name: jmx-config
+              mountPath: /etc/jmx-config
+            - name: jmx-agent
+              mountPath: /jmx_exporter
+      volumes:
+        - name: jmx-config
+          configMap:
+            name: kafka-jmx-config
+        - name: jmx-agent
+          emptyDir: {}
