@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka-connect-exporter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kafka-connect-exporter
+  template:
+    metadata:
+      labels:
+        app: kafka-connect-exporter
+    spec:
+      containers:
+        - name: jmx-exporter
+          image: bitnami/jmx-exporter:latest
+          args:
+            - "9404"
+            - "/etc/jmx-exporter/kafka-connect.yaml"
+          ports:
+            - containerPort: 9404
+          volumeMounts:
+            - name: config-volume
+              mountPath: /etc/jmx-exporter
+      volumes:
+        - name: config-volume
+          configMap:
+            name: kafka-connect-jmx-config
+
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kafka-connect-jmx-config
+data:
+  kafka-connect.yaml: |
+    startDelaySeconds: 0
+    lowercaseOutputName: true
+    lowercaseOutputLabelNames: true
+    jmxUrl: service:jmx:rmi:///jndi/rmi://kafka-connect:5555/jmxrmi  # <== REQUIRED
+
+    rules:
+      - pattern: "kafka.connect<type=connect-worker-metrics, name=connect-node-metrics><>.*"
+        name: "kafka_connect_worker_$0"
+        type: GAUGE
+
+      - pattern: "kafka.connect<type=connector-metrics, connector=.*, name=.*><>.*"
+        name: "kafka_connect_connector_$0"
+        type: GAUGE
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka-connect-exporter
+spec:
+  selector:
+    app: kafka-connect-exporter
+  ports:
+    - name: metrics
+      port: 9404
+      targetPort: 9404
+  type: ClusterIP

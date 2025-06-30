@@ -1,0 +1,5 @@
+kafka-python==2.0.2
+sseclient-py==1.7.2
+requests==2.32.2
+elasticsearch==7.17.0
+prometheus_client==0.21.1
