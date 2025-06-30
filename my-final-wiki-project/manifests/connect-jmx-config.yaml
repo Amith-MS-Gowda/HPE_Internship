@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: connect-jmx-config
+data:
+  connect.yml: |
+    startDelaySeconds: 0
+    lowercaseOutputName: true
+    lowercaseOutputLabelNames: true
+    rules:
+      - pattern: "kafka.connect<type=(.+), name=(.+)><>([a-zA-Z]+)"
+        name: "kafka_connect_$1_$2_$3"
+        type: GAUGE

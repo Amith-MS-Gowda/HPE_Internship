@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kafka-jmx-config
+data:
+  config.yaml: |
+    lowercaseOutputName: true
+    lowercaseOutputLabelNames: true
+    rules:
+    - pattern: "kafka.server<type=(.+), name=(.+)PerSec><>Count"
+      name: "kafka_server_$1_$2_total"
+    - pattern: "kafka.server<type=(.+), name=(.+)PerSec><>MeanRate"
+      name: "kafka_server_$1_$2_rate"
+    - pattern: "kafka.server<type=(.+), topic=(.+), partition=(.+), name=(.+)><>Value"
+      name: "kafka_server_$1_$4"
+      labels:
+        topic: "$2"
+        partition: "$3"
+    - pattern: "kafka.log<type=Log, name=(.+)><>Value"
+      name: "kafka_log_$1"
+    - pattern: "kafka.network<type=(.+), name=(.+)><>Value"
+      name: "kafka_network_$1_$2"
+    - pattern: "kafka.controller<type=(.+), name=(.+)><>Value"
+      name: "kafka_controller_$1_$2"
+    - pattern: ".*"

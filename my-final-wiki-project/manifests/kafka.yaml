@@ -1,0 +1,91 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka
+spec:
+  ports:
+  - port: 9092
+    name: kafka
+    targetPort: 9092
+  - port: 5555
+    name: jmx
+    targetPort: 5555
+  - port: 9101
+    name: metrics
+    targetPort: 9101
+  selector:
+    app: kafka
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kafka
+  template:
+    metadata:
+      labels:
+        app: kafka
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9101"
+    spec:
+      # Using a single container for simplicity until ZooKeeper is stable
+      containers:
+      - name: kafka
+        image: bitnami/kafka:3.7
+        ports:
+        - containerPort: 9092
+          name: kafka
+        - containerPort: 5555
+          name: jmx
+        env:
+        - name: KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP
+          value: "PLAINTEXT:PLAINTEXT"
+        - name: KAFKA_CFG_LISTENERS
+          value: "PLAINTEXT://:9092"
+        - name: KAFKA_CFG_ADVERTISED_LISTENERS
+          value: "PLAINTEXT://kafka:9092"
+        - name: KAFKA_HEAP_OPTS
+          value: "-Xmx512m -Xms512m"
+
+        - name: KAFKA_ZOOKEEPER_CONNECT
+          value: zookeeper:2181
+        - name: KAFKA_LISTENERS
+          value: PLAINTEXT://0.0.0.0:9092
+        - name: KAFKA_ADVERTISED_LISTENERS
+          value: PLAINTEXT://kafka:9092
+        - name: KAFKA_BROKER_ID
+          value: "1"
+        - name: KAFKA_PORT
+          value: "9092"
+        - name: KAFKA_JMX_OPTS
+          value: >-
+            -javaagent:/jmx_exporter/jmx_prometheus_javaagent.jar=9101:/etc/jmx-exporter/config.yaml        - name: JMX_PORT
+          value: "-Xmx512m"
+        resources:
+          limits:
+            memory: "2Gi"
+            cpu: "2"
+          requests:
+            memory: "1Gi"
+            cpu: "1"
+        livenessProbe:
+          tcpSocket:
+            port: 9092
+          initialDelaySeconds: 60
+          periodSeconds: 10
+        readinessProbe:
+          tcpSocket:
+            port: 9092
+          initialDelaySeconds: 60
+          periodSeconds: 5
+      
+      # JMX exporter container removed for now - we'll focus on getting Kafka up first
+      volumes:
+      - name: jmx-config
+        configMap:
+          name: kafka-jmx-config

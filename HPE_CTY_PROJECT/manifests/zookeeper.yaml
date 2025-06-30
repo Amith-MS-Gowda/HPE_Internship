@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: zookeeper
+spec:
+  selector:
+    app: zookeeper
+  ports:
+    - name: client
+      port: 2181
+      targetPort: 2181
+    - name: metrics
+      port: 9141
+      targetPort: 9141
+
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zookeeper
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: zookeeper
+  template:
+    metadata:
+      labels:
+        app: zookeeper
+    spec:
+        # Reference to your secret for pulling images
+      containers:
+        - name: zookeeper
+          image: wurstmeister/zookeeper
+          ports:
+            - containerPort: 2181
+      
+          env:
+            - name: ZOOKEEPER_URI
+              value: "zookeeper:2181"  # Use the Kubernetes service name to connect to Zookeeper

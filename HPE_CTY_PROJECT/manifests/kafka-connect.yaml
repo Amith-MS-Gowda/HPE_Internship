@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka-connect
+spec:
+  selector:
+    app: kafka-connect
+  ports:
+    - name: rest
+      port: 8083
+      targetPort: 8083
+    - name: jmx
+      port: 5555
+      targetPort: 5555
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka-connect
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kafka-connect
+  template:
+    metadata:
+      labels:
+        app: kafka-connect
+    spec:
+      containers:
+        - name: kafka-connect
+          image: confluentinc/cp-kafka-connect:latest
+          ports:
+            - containerPort: 8083
+            - containerPort: 5555  # JMX port
+          env:
+            - name: JMX_PORT
+              value: "5555"
+            - name: KAFKA_JMX_OPTS
+              value: "-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=5555 -Dcom.sun.management.jmxremote.rmi.port=5555 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=0.0.0.0"
+            - name: CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR
+              value: "1"
+            - name: CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR
+              value: "1"
+            - name: CONNECT_STATUS_STORAGE_REPLICATION_FACTOR
+              value: "1"
+            - name: CONNECT_BOOTSTRAP_SERVERS
+              value: kafka:9092
+            - name: CONNECT_REST_ADVERTISED_HOST_NAME
+              value: kafka-connect
+            - name: CONNECT_GROUP_ID
+              value: connect-cluster
+            - name: CONNECT_CONFIG_STORAGE_TOPIC
+              value: connect-configs
+            - name: CONNECT_OFFSET_STORAGE_TOPIC
+              value: connect-offsets
+            - name: CONNECT_STATUS_STORAGE_TOPIC
+              value: connect-status
+            - name: CONNECT_KEY_CONVERTER
+              value: org.apache.kafka.connect.json.JsonConverter
+            - name: CONNECT_VALUE_CONVERTER
+              value: org.apache.kafka.connect.json.JsonConverter
+            - name: CONNECT_INTERNAL_KEY_CONVERTER
+              value: org.apache.kafka.connect.json.JsonConverter
+            - name: CONNECT_INTERNAL_VALUE_CONVERTER
+              value: org.apache.kafka.connect.json.JsonConverter
+            - name: CONNECT_LOG4J_ROOT_LOGLEVEL
+              value: INFO
+            - name: CONNECT_PLUGIN_PATH
+              value: /usr/share/java,/usr/share/confluent-hub-components

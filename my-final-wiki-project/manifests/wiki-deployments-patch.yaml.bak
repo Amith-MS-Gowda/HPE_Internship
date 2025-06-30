@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wiki-stream-processor
+spec:
+  template:
+    metadata:
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "6066"
+        prometheus.io/path: "/metrics"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wiki-producer
+spec:
+  template:
+    metadata:
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8000"
+        prometheus.io/path: "/metrics"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wiki-processor
+spec:
+  template:
+    metadata:
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8000"
+        prometheus.io/path: "/metrics"

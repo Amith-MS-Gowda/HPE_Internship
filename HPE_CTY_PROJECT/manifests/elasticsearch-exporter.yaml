@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: elasticsearch-exporter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: elasticsearch-exporter
+  template:
+    metadata:
+      labels:
+        app: elasticsearch-exporter
+    spec:
+      containers:
+        - name: elasticsearch-exporter
+          image: bitnami/elasticsearch-exporter:latest
+          args:
+            - '--es.uri=http://elasticsearch:9200'
+            - '--web.listen-address=:9108'
+          ports:
+            - containerPort: 9108
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: elasticsearch-exporter
+spec:
+  selector:
+    app: elasticsearch-exporter
+  ports:
+    - name: http
+      port: 9108      # The port Prometheus will scrape
+      targetPort: 9108 # The port exposed by the container
+  type: ClusterIP
+
