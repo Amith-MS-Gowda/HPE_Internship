@@ -38,38 +38,38 @@ Wikipedia Events → wiki_producer.py → Kafka → wiki_stream_processor.py
 
 ## 📂 Folder Structure
 
-.
-├── kafka/
-├── elasticsearch/
-├── wiki_producer/
-│   ├── wiki_producer.py
-│   └── Dockerfile
-├── wiki_stream_processor/
-│   ├── wiki_stream_processor.py
-│   └── Dockerfile
-├── prometheus/
-│   ├── prometheus-deployment.yaml
-│   └── prometheus-config.yaml
-├── grafana/
-│   └── grafana-deployment.yaml
-├── manifests/
-│   ├── kafka.yaml
-│   ├── zookeeper.yaml
+📁 HPE_CTY_PROJECT
+├── 📁 jmx_exporter
+│
+├── 📁 manifests
+│   ├── elasticsearch-exporter.yaml
 │   ├── elasticsearch.yaml
-│   ├── kibana.yaml
-│   ├── kafka-ui.yaml
+│   ├── grafana-deployment.yaml
+│   ├── kafka-connect-exporter.yaml
 │   ├── kafka-connect.yaml
 │   ├── kafka-exporter.yaml
-│   ├── elasticsearch-exporter.yaml
+│   ├── kafka-ui.yaml
+│   ├── kafka-wiki-pipeline.yaml
+│   ├── kafka.yaml
+│   ├── kibana.yaml
 │   ├── node-exporter.yaml
-│   ├── wiki-producer.yaml
+│   ├── prometheus-deployment.yaml
 │   ├── wiki-processor.yaml
-│   ├── wiki-processor-service.yaml
-│   ├── wiki-producer-service.yaml
-│   └── ...
-├── Makefile
-├── requirements.txt
-└── README.md
+│   ├── wiki-producer.yaml
+│   └── zookeeper.yaml
+│
+├── 📁 wiki_producer
+│   ├── Dockerfile
+│   ├── requirements.txt
+│   └── wiki_producer.py
+│
+├── 📁 wiki_stream_processor
+│   ├── Dockerfile
+│   ├── requirements.txt
+│   └── wiki_processor.py
+│
+├── docker-compose.yml
+└── Makefile
 
 ## 🛠️ Setup Instructions
 
