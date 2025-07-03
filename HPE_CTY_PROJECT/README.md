@@ -15,9 +15,10 @@ This project implements a **scalable real-time data pipeline** that:
 It is built using **modular microservices**, containerized with **Docker**, orchestrated with **Kubernetes (KIND)**, and monitored via **metrics exporters**.
 
 ## ⚙️ Tech Stack
-| Component            | Technology Used               |
+| Component           | Technology Used               |
 |---------------------|-------------------------------|
 | Ingestion           | Python (wiki_producer.py)     |
+| Connection          | Kafka Connect                 |
 | Stream Processing   | Faust (wiki_stream_processor) |
 | Messaging Queue     | Apache Kafka + Zookeeper      |
 | Data Sink           | Elasticsearch (via Kafka Connect) |
@@ -25,6 +26,7 @@ It is built using **modular microservices**, containerized with **Docker**, orch
 | Visualization       | Grafana                       |
 | Containerization    | Docker                        |
 | Orchestration       | Kubernetes (KIND)             |
+| Alert System        | SMTP (Simple Mail Transfer Protocol) |             |
 
 ## 🏗️ Architecture
 
