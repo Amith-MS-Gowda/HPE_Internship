@@ -38,6 +38,7 @@ Wikipedia Events → wiki_producer.py → Kafka → wiki_stream_processor.py
 
 ## 📂 Folder Structure
 
+```
 📁 HPE_CTY_PROJECT
 ├── 📁 jmx_exporter
 │
@@ -68,8 +69,8 @@ Wikipedia Events → wiki_producer.py → Kafka → wiki_stream_processor.py
 │   ├── requirements.txt
 │   └── wiki_processor.py
 │
-├── docker-compose.yml
 └── Makefile
+```
 
 ## 🛠️ Setup Instructions
 
@@ -88,8 +89,8 @@ make create-cluster
 # Step 2: Deploy all services
 make deploy
 
-# Step 3: (Optional) Deploy Prometheus & Grafana
-make deploy-prometheus
+# Step 3: Check the status of running pods
+make pods
 
 # Step 4: Access dashboards
 make port-forward-prometheus  # Opens Prometheus at http://localhost:9090
@@ -100,7 +101,7 @@ make port-forward-kibana      # Kibana at http://localhost:5601
 
 ## 📈 Monitoring Setup
 
-### Prometheus Targets (`prometheus.yml`)
+### Prometheus Targets (`prometheus.yaml`)
 ```yaml
 scrape_configs:
   - job_name: 'wiki-producer'
@@ -128,8 +129,7 @@ scrape_configs:
 - Prometheus Data Source URL: `http://prometheus:9090`
 - Import dashboards using JSON or ID:
   - Kafka Overview: `7589`
-  - Elasticsearch: `1860`
-  - Node Exporter: `1860`
+  - Elasticsearch: `2322`
 
 ## ✅ Expected Output
 
@@ -161,9 +161,9 @@ scrape_configs:
 - [Faust Stream Processing](https://faust.readthedocs.io/)
 
 ## 📅 Project Timeline (Phases)
-| Phase          | Description                          |
-|----------------|--------------------------------------|
-| Phase 1        | Docker Desktop Kubernetes            |
-| Phase 2        | Minikube Migration                   |
-| Phase 3        | Final deployment with KIND           |
-| Final          | Monitoring with Prometheus + Grafana |
+| Phase          | Description                                       |
+|----------------|---------------------------------------------------|
+| Phase 1        | Docker Desktop Kubernetes                         |
+| Phase 2        | Minikube Migration                                |
+| Phase 3        | Final deployment with KIND                        |
+| Final          | Monitoring and alerting with Prometheus + Grafana |
