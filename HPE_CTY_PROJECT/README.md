@@ -8,9 +8,10 @@
 This project implements a **scalable real-time data pipeline** that:
 - Ingests live events (Wikipedia edits)
 - Streams them to **Apache Kafka**
-- Processes the events using a **Faust Stream Processor**
+- Processes the events using a **Faust Stream Processor** using **Kafka Connect**
 - Forwards the filtered data to **Elasticsearch** via **Kafka Connect**
 - Enables observability with **Prometheus** and **Grafana**
+- Alerts the system using **SMTP** (Simple Mail Transfer Protocol)
 
 It is built using **modular microservices**, containerized with **Docker**, orchestrated with **Kubernetes (KIND)**, and monitored via **metrics exporters**.
 
