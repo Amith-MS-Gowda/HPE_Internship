@@ -42,7 +42,7 @@ producer-logs:
 	$(KUBECTL) logs deployment/wiki-producer -f
 
 processor-logs:
-	$(KUBECTL) logs deployment/wiki-processor -f
+	$(KUBECTL) logs deployment/wiki-stream-processor -f
 
 port-forward-kibana:
 	$(KUBECTL) port-forward service/kibana 5601:5601
