@@ -162,7 +162,7 @@ scrape_configs:
 - [Prometheus Docs](https://prometheus.io/docs/)
 - [Grafana Docs](https://grafana.com/docs/)
 - [Faust Stream Processing](https://faust.readthedocs.io/)
-- 📄 [View Full Project Report (PDF - opens in browser)](https://github.com/Amith-MS-Gowda/HPE_Internship/raw/main/HPE_CTY_PROJECT/Documents/HPE_CTY_REPORT.pdf)
+- 📄 [View Full Project Report (PDF)](https://github.com/Amith-MS-Gowda/HPE_Internship/raw/main/HPE_CTY_PROJECT/Documents/HPE_CTY_REPORT.pdf)
 
 ## 📅 Project Timeline (Phases)
 | Phase          | Description                                       |
